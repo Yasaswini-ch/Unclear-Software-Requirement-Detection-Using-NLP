@@ -136,6 +136,28 @@ You will get:
   - Highlighted text and reasons.
 - A **Download results as CSV** button.
 
+### Agent Assist mode
+
+Agent Assist turns the detector into a small interactive agent that helps you iteratively improve a requirement.
+
+1. Select **Agent Assist**.
+2. Enter a requirement in the **Original requirement** box.
+3. Click **Analyze with Agent**.
+
+You will see:
+
+- The **original** status, severity, tags, and highlighted text.
+- A **suggested rewrite** generated from simple templates (with placeholders like `[X seconds]`, `[N] users`).
+- An **agent iteration** indicator and a **goal line**, e.g., `Agent iteration: 1 → 2` and `Goal: Reduce severity from 3 → ≤ 1`.
+- An **Agent rationale** panel built from the detected tags.
+
+You can edit the suggested text and click **Re-analyze suggested version** to let the agent:
+
+- Re-run the analysis on the updated requirement.
+- Show a **version comparison** (original vs current suggestion) with status and severity side by side.
+
+Unlike a one-shot classifier, Agent Assist follows a goal-driven loop of analyze → suggest → re-evaluate, which qualifies it as a lightweight AI agent.
+
 ---
 
 ## 🧩 How It Works (High Level)

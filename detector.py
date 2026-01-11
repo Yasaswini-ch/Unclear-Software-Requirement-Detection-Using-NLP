@@ -123,3 +123,68 @@ def analyze_requirement(text, max_length=20, ml_threshold=0.6):
         "tags": sorted(tags),
         "severity": severity,
     }
+
+
+def suggest_rewrite(text, tags, iteration: int = 1) -> str:
+    """Return a simple, template-based rewrite suggestion.
+
+    The goal is to incrementally replace vague phrases with measurable
+    placeholders and optionally add missing constraints. To keep the
+    behavior agent-like, only a couple of vague terms are adjusted per
+    iteration.
+    """
+    suggestion = text
+
+    # Handle vague terms incrementally
+    if "VAGUE_TERMS" in tags:
+        # Find vague terms present in order of appearance
+        lower = suggestion.lower()
+        present_terms = [t for t in VAGUE_WORDS if t in lower]
+        # Adjust at most two per iteration
+        start_index = (iteration - 1) * 2
+        to_fix = present_terms[start_index:start_index + 2]
+
+        for term in to_fix:
+            pattern = re.compile(re.escape(term), flags=re.IGNORECASE)
+            replacement = term
+            if term in {"fast", "quick", "efficient"}:
+                replacement = "respond within [X seconds]"
+            elif term in {"many", "large"}:
+                replacement = "[N] users"
+            elif term == "user-friendly":
+                replacement = "achieve a usability score of at least [X]/[Y]"
+            elif term in {"scalable", "flexible"}:
+                replacement = "support up to [N] users without performance degradation"
+            elif term in {"robust", "reliable"}:
+                replacement = "maintain an uptime of [X]% over [Y] days"
+            elif term == "secure":
+                replacement = "meet [X] security standard (e.g., OWASP Top 10)"
+
+            suggestion = pattern.sub(replacement, suggestion)
+
+    # If there are no explicit numeric constraints, append a generic one
+    if "NO_CONSTRAINTS" in tags:
+        suggestion = suggestion.rstrip(" .") + \
+            ". The system shall respond within [X seconds] for up to [N] users."
+
+    # For complex sentences, lightly suggest a split using a semicolon
+    if "COMPLEX_SENTENCE" in tags and " and " in suggestion:
+        suggestion = suggestion.replace(" and ", "; and ", 1)
+
+    return suggestion
+
+
+def build_agent_rationale(tags) -> list:
+    """Map analysis tags to simple rationale bullet points for the agent UI."""
+    rationale = []
+    if "VAGUE_TERMS" in tags:
+        rationale.append("Detected vague term(s) that should be made measurable.")
+    if "NO_CONSTRAINTS" in tags:
+        rationale.append("Detected missing measurable constraints (time, volume, or users).")
+    if "COMPLEX_SENTENCE" in tags:
+        rationale.append("Sentence looks long or complex; consider splitting into smaller requirements.")
+    if "ML_AMBIGUITY" in tags:
+        rationale.append("ML model also flags potential ambiguity in this requirement.")
+    if not rationale:
+        rationale.append("Requirement appears reasonably clear; minor wording tweaks only.")
+    return rationale

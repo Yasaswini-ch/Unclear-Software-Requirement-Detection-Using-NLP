@@ -1,0 +1,12 @@
+Input: The system shall be fast and scalable.
+Output: Unclear — Vague terms detected (fast, scalable)
+
+Input: The system shall respond in under 2 seconds.
+Output: Clear — Contains measurable constraint
+
+Input: The interface should be user-friendly.
+Output: Unclear — Contains vague term 'user-friendly'
+
+Input: The database must handle 1000 requests per minute.
+Output: Clear — Well-defined measurable constraint
+give 
