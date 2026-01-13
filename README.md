@@ -1,4 +1,6 @@
-## 🧠 Unclear Software Requirement Detection Using NLP
+## Requirement Refinement agent
+
+🧠 Unclear Software Requirement Detection Using NLP
 
 A simple, explainable NLP-based tool that detects whether a software requirement statement is **Clear**, **Partially Clear**, or **Unclear**.
 
